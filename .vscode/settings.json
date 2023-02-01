@@ -1,0 +1,11 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "networktables/ntcore-java-2023.2.1-22-gb2b25bf-sources.jar",
+        "networktables/ntcore-java-2023.2.1-22-gb2b25bf.jar",
+        "networktables/ntcore-jni-2023.2.1-22-gb2b25bf-windowsx86-64.jar",
+        "networktables/wpiutil-java-2023.2.1-22-gb2b25bf-sources.jar",
+        "networktables/wpiutil-java-2023.2.1-22-gb2b25bf.jar",
+        "networktables/wpiutil-jni-2023.2.1-22-gb2b25bf-windowsx86-64.jar"
+    ]
+}
