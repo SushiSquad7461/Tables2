@@ -1,56 +1,100 @@
 package src;
 import java.awt.*;
+
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.text.*;
 
-//import edu.wpi.first.networktables.NetworkTableInstance;
+import src.view.Buttons;
+import src.view.CustomTableCellRenderer;
+
+//import edu.wpi.first.networktables.*;
+
 import src.view.RowInputOutput;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.ImageObserver;
 import java.util.Arrays;
-import java.awt.Dimension;
+
+//download all updates => prints string array for all ( send values)
+//load defaults -> either new window or reload table
+//run included motors => prints string array only if included ( send included values)
+//stop included motors => prints string array for included that gives motor name + "stop" (stop motors)
 
 public class TableTest extends JPanel 
                         implements ActionListener { 
 
     private JTable table;
     private JButton pushAll;
+    private JButton defaultButton;
+    private JButton runMotors;
+    private JButton stopMotors;
+
+    private static JFrame frame;
     private JTextPane textPane;
     private SimpleAttributeSet keyWord = new SimpleAttributeSet();
 
-    private String[] info = {"subsystem0 motor1 0.0 0 0 0 0.0 0.0", "subsystem0 motor2 0.0 0 0 0 0.0 0.0", "subsystem1 motor3 0.0 0 0 0 0.0 0.0"};
+    private String[] defaultInfo = {
+        "subsystem0 motor1 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0", "subsystem0 motor2 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0",
+        "subsystem0 motor3 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0", "subsystem0 motor4 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0",
+        "subsystem0 motor5 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0", "subsystem0 motor6 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0"
+    };
     private String[] messages = {"System is working", "Error: not working", "System is back to normal", "Error: not working"};
 
     public TableTest() {
         super();
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        table = new JTable(new RowInputOutput(info));
+        table = new JTable(new RowInputOutput(defaultInfo));
         table.setPreferredScrollableViewportSize(new Dimension(300, 50));
         table.setFillsViewportHeight(true);
         add(new JScrollPane(table));
         ((DefaultTableCellRenderer)table.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);  
         table.setDefaultRenderer(Object.class, new CustomTableCellRenderer());
 
-        pushAll = new JButton("push all rows");
-        pushAll.setVerticalTextPosition(AbstractButton.CENTER);
-        pushAll.setBounds(200, table.getModel().getRowCount() * 20 + 20,100,60);
-
+        int rowCount = table.getModel().getRowCount();
+        pushAll = new Buttons("download all updates", rowCount);
         pushAll.addActionListener(this);
-        table.add(pushAll);
+        add(pushAll);
+
+        defaultButton = new Buttons("load original defaults", rowCount);
+        defaultButton.addActionListener(this);
+        add(defaultButton);
+
+        runMotors = new Buttons("run included motors", rowCount);
+        runMotors.addActionListener(this);
+        add(runMotors);
+
+        stopMotors = new Buttons("stop included motors", rowCount);
+        stopMotors.addActionListener(this);
+        add(stopMotors);
 
         textPane = new JTextPane();
         StyleConstants.setForeground(keyWord, Color.RED);
         add(new JScrollPane(textPane));
 
-        printOutput(messages);
     }
  
     public void actionPerformed(ActionEvent event) {
-        String[] output = new String[table.getRowCount()];
-        System.out.println(Arrays.toString(RowInputOutput.sendValues(output, table)));
-        printOutput(messages);
+        Object buttonName = event.getSource();
+        if (buttonName.equals(pushAll)){
+            String[] output = new String[table.getRowCount()];
+            System.out.println(Arrays.toString(RowInputOutput.sendValues(output, table)));
+            printOutput(messages);
+        } else if (buttonName.equals(defaultButton)){ //use create and show gui to load new window instead, or do this
+            TableTest newContentPane = new TableTest();
+            newContentPane.setOpaque(true); 
+            frame.setContentPane(newContentPane);
+            frame.pack();
+            frame.setVisible(true);
+        } else if (buttonName.equals(runMotors)){
+            String[] output = new String[table.getRowCount()];
+            System.out.println(Arrays.toString(RowInputOutput.sendIncludedValues(output, table)));
+            printOutput(messages);
+        } else {
+            String[] output = new String[table.getRowCount()];
+            System.out.println(Arrays.toString(RowInputOutput.stopMotors(output, table)));
+            printOutput(messages);
+        }
     }
 
     private void printOutput(String[] messages){ 
@@ -74,34 +118,21 @@ public class TableTest extends JPanel
       
     }
 
-    static class CustomTableCellRenderer extends DefaultTableCellRenderer {
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-          Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-          if (row % 2 == 1) {
-            c.setBackground(Color.CYAN);
-          } else {
-            c.setBackground(Color.PINK);
-          }
-          return c;
-        }
-    }
-    
     // Create the GUI and show it. This is my window method
     private static void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("tables");
+        frame = new JFrame("tables");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-           //Create and set up the content pane.
+        //Create and set up the content pane.
+
+        // ImageIcon icon = new ImageIcon("/Users/nitya/java/tables_copy/assets/images/img1.png");
+        // JLabel background = new JLabel(icon);
+        // background.setBounds(0, 50, 500, 200);
+        // frame.add(background);
+
         TableTest newContentPane = new TableTest();
         newContentPane.setOpaque(true); //content panes must be opaque.
-        frame.setContentPane(newContentPane);
-
-        ImageIcon icon = new ImageIcon(".assets/images/Screen Shot 2022-12-03 at 9.45.27 PM.png");
-        JLabel background = new JLabel(icon);
-        background.setSize(ImageObserver.WIDTH, ImageObserver.HEIGHT);
-    
-        frame.getContentPane().add(background);    
-
+        frame.add(newContentPane);
         //Display the window.
         frame.pack();
         frame.setVisible(true);
@@ -111,7 +142,10 @@ public class TableTest extends JPanel
         //creating and showing GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                //NetworkTableInstance.getDefault();
+                // NetworkTableInstance inst = NetworkTableInstance.getDefault();
+                // DoubleTopic dblTopic = inst.getDoubleTopic("/datatable/X");
+                // System.out.println(dblTopic.getInfo().toString());
+
                 createAndShowGUI();
             }
         });

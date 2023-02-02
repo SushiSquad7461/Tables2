@@ -6,19 +6,24 @@ import src.logic.MotorInfo;
 
 public class RowInputOutput extends AbstractTableModel{
 
-    String[] columnNames = {"Subsystem", "MotorNum", "Speed", //preset
-    "Coast", "Flip Encoder",
-    "Current Limit",
-    "Encoder Min",
-    "Encoder Max"};
+    private String[] columnNames = {
+    "Subsystem", "MotorNum", "PdhPort", 
+    "CanID", "Const Speed", "Joystick Scale Factor", //preset
+    "Is Coast?", "Motor Inversed?", "Current Limit",
+    "Encoder Min", "Encoder Max", "Is Included?"};
     
-    Object[][] data = new Object[3][columnNames.length]; //keep constant for now
+    private int rowCount = 6;
+    private Object[][] data = new Object[rowCount][columnNames.length]; //keep constant for now
 
     public RowInputOutput(String[] inputs) {
         for (int i = 0; i < inputs.length; i++){//read network table string array
             MotorInfo motorInfo = new MotorInfo(inputs[i]);
-            data[i] = new Object[]{motorInfo.subSystem, motorInfo.motorName, motorInfo.speed, motorInfo.coast, motorInfo.encoderDir, motorInfo.currLimit, 
-            motorInfo.encoderMin, motorInfo.encoderMax};
+            data[i] = new Object[]{
+            motorInfo.subSystem, motorInfo.motorName, motorInfo.pdhPort, 
+            motorInfo.canID, motorInfo.speed, motorInfo.joystickScale,
+            motorInfo.coast, motorInfo.motorInversed, motorInfo.currLimit, 
+            motorInfo.encoderMin, motorInfo.encoderMax, motorInfo.isIncluded
+            };
         }
     }
 
@@ -35,6 +40,36 @@ public class RowInputOutput extends AbstractTableModel{
         return output;
     }
 
+    public static String[] sendIncludedValues(String[] output, JTable table){
+        for (int rows = 0; rows < table.getRowCount(); rows++){
+            if ((Boolean)table.getModel().getValueAt(rows, 11) == Boolean.TRUE){
+                for (int cols = 0; cols < table.getColumnCount(); cols++){
+                    Object value = table.getModel().getValueAt(rows, cols).toString();
+                    output[rows] += (value) + " ";
+                }
+            }
+
+            if (output[rows] != null){
+                output[rows] = output[rows].substring(4);
+            }
+        }
+        return output;
+    }
+
+    public static String[] stopMotors(String[] output, JTable table){
+        for (int rows = 0; rows < table.getRowCount(); rows++){
+            if ((Boolean)table.getModel().getValueAt(rows, 11) == Boolean.TRUE){
+                Object value = table.getModel().getValueAt(rows, 1).toString();
+                output[rows] += (value) + " stop ";
+            }
+
+            if (output[rows] != null){
+                output[rows] = output[rows].substring(4);
+            }
+        }
+        return output;
+    }
+    
     public int getColumnCount() {
         return columnNames.length;
     }
@@ -56,7 +91,15 @@ public class RowInputOutput extends AbstractTableModel{
         return getValueAt(0, c).getClass();
     }
 
+    //if col of 3 at row(s) != null || != 0, set col of 4 at row(s) to false and vice versa
     public boolean isCellEditable(int row, int col) {
+        Double col4Value = Double.parseDouble(getValueAt(row, 4).toString());
+        Double col5Value = Double.parseDouble(getValueAt(row, 5).toString());
+        if (col == 5 && col4Value != 0.0){
+            return false;
+        } else if (col == 4 && col5Value != 0.0){
+            return false;
+        }
         return true;
     }
 

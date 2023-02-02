@@ -11,7 +11,7 @@ import java.io.IOException;
 
 import edu.wpi.first.util.WPIUtilJNI;
 public class NetworkTablesDesktopClient {
-    
+
   // public static void main(String[] args) {
   //   new NetworkTablesDesktopClient().run();
   // }
@@ -28,7 +28,7 @@ public class NetworkTablesDesktopClient {
         DoubleSubscriber xSub = table.getDoubleTopic("x").subscribe(0.0);
         DoubleSubscriber ySub = table.getDoubleTopic("y").subscribe(0.0);
         inst.startClient4("example client");
-        inst.setServer("localhost"); // where TEAM=190, 294, etc, or use inst.setServer("hostname") or similar
+        inst.setServer("7461"); // where TEAM=190, 294, etc, or use inst.setServer("hostname") or similar
         inst.startDSClient(); // recommended if running on DS computer; this gets the robot IP from the DS
         while (true) {
             try {
