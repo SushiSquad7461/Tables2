@@ -42,7 +42,7 @@ public class RowInputOutput extends AbstractTableModel{
 
     public static String[] sendIncludedValues(String[] output, JTable table){
         for (int rows = 0; rows < table.getRowCount(); rows++){
-            if ((Boolean)table.getModel().getValueAt(rows, 11) == Boolean.TRUE){
+            if ((Boolean)table.getModel().getValueAt(rows, 11) != Boolean.FALSE){
                 for (int cols = 0; cols < table.getColumnCount(); cols++){
                     Object value = table.getModel().getValueAt(rows, cols).toString();
                     output[rows] += (value) + " ";

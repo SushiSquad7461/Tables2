@@ -15,11 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
-//download all updates => prints string array for all ( send values)
-//load defaults -> either new window or reload table
-//run included motors => prints string array only if included ( send included values)
-//stop included motors => prints string array for included that gives motor name + "stop" (stop motors)
-
 public class TableTest extends JPanel 
                         implements ActionListener { 
 
@@ -77,7 +72,7 @@ public class TableTest extends JPanel
     public void actionPerformed(ActionEvent event) {
         Object buttonName = event.getSource();
         if (buttonName.equals(pushAll)){
-            String[] output = new String[table.getRowCount()];
+            String[] output = new String[table.getRowCount()]; //could get row count for included values
             System.out.println(Arrays.toString(RowInputOutput.sendValues(output, table)));
             printOutput(messages);
         } else if (buttonName.equals(defaultButton)){ //use create and show gui to load new window instead, or do this
