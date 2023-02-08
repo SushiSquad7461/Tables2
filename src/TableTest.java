@@ -28,10 +28,10 @@ public class TableTest extends JPanel
     private SimpleAttributeSet keyWord = new SimpleAttributeSet();
 
     static NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    static NetworkTable dataTable = inst.getTable("dataTable"); //makes data table
-    static NetworkTableEntry dataTableEntry = inst.getEntry("data"); //makes string array
-    static NetworkTableEntry runningEntry = inst.getEntry("running?"); //is running? entry
+    NetworkTable dataTable = inst.getTable("dataTable"); //makes data table
 
+    StringArrayPublisher dArrayPublisher = dataTable.getStringArrayTopic("tableValues").publish();;
+    BooleanPublisher rBooleanPublisher = dataTable.getBooleanTopic("Running?").publish();
 
     private String[] defaultInfo = {
         "subsystem0 motor1 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0", "subsystem0 motor2 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0",
@@ -47,6 +47,7 @@ public class TableTest extends JPanel
         table = new JTable(new RowInputOutput(defaultInfo));
         table.setPreferredScrollableViewportSize(new Dimension(300, 50));
         table.setFillsViewportHeight(true);
+        table.setFont(new Font("Sushi Sans", Font.BOLD, 25));
         add(new JScrollPane(table));
         ((DefaultTableCellRenderer)table.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);  
         table.setDefaultRenderer(Object.class, new CustomTableCellRenderer());
@@ -80,9 +81,9 @@ public class TableTest extends JPanel
             String[] output = new String[table.getRowCount()]; //could get row count for included values
             System.out.println(Arrays.toString(RowInputOutput.sendValues(output, table)));
 
-            dataTableEntry.setDefaultStringArray(null);
-            dataTableEntry.setStringArray(RowInputOutput.sendValues(output, table));
-        
+            dArrayPublisher.set(RowInputOutput.sendValues(output, table));
+            dArrayPublisher.setDefault(null);
+
             printOutput(messages); //subscriber needed to receive error messages 
         } else if (buttonName.equals(defaultButton)){ //use create and show gui to load new window instead, or do this
             TableTest newContentPane = new TableTest();
@@ -94,16 +95,16 @@ public class TableTest extends JPanel
             String[] output = new String[table.getRowCount()];
             System.out.println(Arrays.toString(RowInputOutput.sendIncludedValues(output, table)));
 
-            runningEntry.setDefaultBoolean(false);
-            runningEntry.setBoolean(true);
+            dArrayPublisher.set(RowInputOutput.sendIncludedValues(output, table));
+            dArrayPublisher.setDefault(null);
+
+            rBooleanPublisher.set(true);
+            rBooleanPublisher.setDefault(false);
 
             printOutput(messages);
         } else {
             String[] output = new String[table.getRowCount()];
             System.out.println(Arrays.toString(RowInputOutput.stopMotors(output, table)));
-
-            runningEntry.setDefaultBoolean(false);
-            runningEntry.setBoolean(false);
         }
     }
 
