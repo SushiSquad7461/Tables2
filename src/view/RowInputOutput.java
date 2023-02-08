@@ -37,6 +37,7 @@ public class RowInputOutput extends AbstractTableModel{
             }
             output[rows] = output[rows].substring(4);
         }
+
         return output;
     }
 

@@ -8,8 +8,7 @@ import javax.swing.text.*;
 import src.view.Buttons;
 import src.view.CustomTableCellRenderer;
 
-//import edu.wpi.first.networktables.*;
-
+import edu.wpi.first.networktables.*;
 import src.view.RowInputOutput;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,7 +16,7 @@ import java.util.Arrays;
 
 public class TableTest extends JPanel 
                         implements ActionListener { 
-
+    
     private JTable table;
     private JButton pushAll;
     private JButton defaultButton;
@@ -27,6 +26,12 @@ public class TableTest extends JPanel
     private static JFrame frame;
     private JTextPane textPane;
     private SimpleAttributeSet keyWord = new SimpleAttributeSet();
+
+    static NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    static NetworkTable dataTable = inst.getTable("dataTable"); //makes data table
+    static NetworkTableEntry dataTableEntry = inst.getEntry("data"); //makes string array
+    static NetworkTableEntry runningEntry = inst.getEntry("running?"); //is running? entry
+
 
     private String[] defaultInfo = {
         "subsystem0 motor1 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0", "subsystem0 motor2 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0",
@@ -74,7 +79,11 @@ public class TableTest extends JPanel
         if (buttonName.equals(pushAll)){
             String[] output = new String[table.getRowCount()]; //could get row count for included values
             System.out.println(Arrays.toString(RowInputOutput.sendValues(output, table)));
-            printOutput(messages);
+
+            dataTableEntry.setDefaultStringArray(null);
+            dataTableEntry.setStringArray(RowInputOutput.sendValues(output, table));
+        
+            printOutput(messages); //subscriber needed to receive error messages 
         } else if (buttonName.equals(defaultButton)){ //use create and show gui to load new window instead, or do this
             TableTest newContentPane = new TableTest();
             newContentPane.setOpaque(true); 
@@ -84,11 +93,17 @@ public class TableTest extends JPanel
         } else if (buttonName.equals(runMotors)){
             String[] output = new String[table.getRowCount()];
             System.out.println(Arrays.toString(RowInputOutput.sendIncludedValues(output, table)));
+
+            runningEntry.setDefaultBoolean(false);
+            runningEntry.setBoolean(true);
+
             printOutput(messages);
         } else {
             String[] output = new String[table.getRowCount()];
             System.out.println(Arrays.toString(RowInputOutput.stopMotors(output, table)));
-            printOutput(messages);
+
+            runningEntry.setDefaultBoolean(false);
+            runningEntry.setBoolean(false);
         }
     }
 
@@ -137,11 +152,22 @@ public class TableTest extends JPanel
         //creating and showing GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                // NetworkTableInstance inst = NetworkTableInstance.getDefault();
-                // DoubleTopic dblTopic = inst.getDoubleTopic("/datatable/X");
-                // System.out.println(dblTopic.getInfo().toString());
-
                 createAndShowGUI();
+
+                inst.startClient4("systems-check");
+                inst.setServerTeam(7461);
+                inst.setServer("systems-check", NetworkTableInstance.kDefaultPort4);
+                inst.startDSClient();
+
+                while (true) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        System.out.println("interrupted");
+                        return;
+                    }
+                }
+
             }
         });
     }
