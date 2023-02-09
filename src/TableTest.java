@@ -27,11 +27,11 @@ public class TableTest extends JPanel
     private JTextPane textPane;
     private SimpleAttributeSet keyWord = new SimpleAttributeSet();
 
-    static NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    NetworkTable dataTable = inst.getTable("dataTable"); //makes data table
+    // static NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    // NetworkTable dataTable = inst.getTable("dataTable"); //makes data table
 
-    StringArrayPublisher dArrayPublisher = dataTable.getStringArrayTopic("tableValues").publish();;
-    BooleanPublisher rBooleanPublisher = dataTable.getBooleanTopic("Running?").publish();
+    // StringArrayPublisher dArrayPublisher = dataTable.getStringArrayTopic("tableValues").publish();;
+    // BooleanPublisher rBooleanPublisher = dataTable.getBooleanTopic("Running?").publish();
 
     private String[] defaultInfo = {
         "subsystem0 motor1 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0", "subsystem0 motor2 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0",
@@ -45,9 +45,12 @@ public class TableTest extends JPanel
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         table = new JTable(new RowInputOutput(defaultInfo));
-        table.setPreferredScrollableViewportSize(new Dimension(300, 50));
+        table.setPreferredScrollableViewportSize(new Dimension(400, 200));
         table.setFillsViewportHeight(true);
-        table.setFont(new Font("Sushi Sans", Font.BOLD, 25));
+        table.setFont(new Font("Sushi Sans", Font.BOLD, 18));
+        table.getTableHeader().setFont(new Font("Sushi Sans", Font.PLAIN, 17));
+        table.setRowHeight(27);
+
         add(new JScrollPane(table));
         ((DefaultTableCellRenderer)table.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);  
         table.setDefaultRenderer(Object.class, new CustomTableCellRenderer());
@@ -73,6 +76,13 @@ public class TableTest extends JPanel
         StyleConstants.setForeground(keyWord, Color.RED);
         add(new JScrollPane(textPane));
 
+        JLabel picLabel = new JLabel("");
+        ImageIcon image = new ImageIcon(new ImageIcon("/Users/nitya/java/tables_copy/assets/images/img2.png").getImage().getScaledInstance(2000, 50, Image.SCALE_SMOOTH));
+        picLabel.setIcon(image);
+        table.setBackground(Color.WHITE);
+        add(picLabel);
+
+
     }
  
     public void actionPerformed(ActionEvent event) {
@@ -81,8 +91,8 @@ public class TableTest extends JPanel
             String[] output = new String[table.getRowCount()]; //could get row count for included values
             System.out.println(Arrays.toString(RowInputOutput.sendValues(output, table)));
 
-            dArrayPublisher.set(RowInputOutput.sendValues(output, table));
-            dArrayPublisher.setDefault(null);
+            // dArrayPublisher.set(RowInputOutput.sendValues(output, table));
+            // dArrayPublisher.setDefault(null);
 
             printOutput(messages); //subscriber needed to receive error messages 
         } else if (buttonName.equals(defaultButton)){ //use create and show gui to load new window instead, or do this
@@ -95,11 +105,11 @@ public class TableTest extends JPanel
             String[] output = new String[table.getRowCount()];
             System.out.println(Arrays.toString(RowInputOutput.sendIncludedValues(output, table)));
 
-            dArrayPublisher.set(RowInputOutput.sendIncludedValues(output, table));
-            dArrayPublisher.setDefault(null);
+            // dArrayPublisher.set(RowInputOutput.sendIncludedValues(output, table));
+            // dArrayPublisher.setDefault(null);
 
-            rBooleanPublisher.set(true);
-            rBooleanPublisher.setDefault(false);
+            // rBooleanPublisher.set(true);
+            // rBooleanPublisher.setDefault(false);
 
             printOutput(messages);
         } else {
@@ -155,19 +165,19 @@ public class TableTest extends JPanel
             public void run() {
                 createAndShowGUI();
 
-                inst.startClient4("systems-check");
-                inst.setServerTeam(7461);
-                inst.setServer("systems-check", NetworkTableInstance.kDefaultPort4);
-                inst.startDSClient();
+                // inst.startClient4("systems-check");
+                // inst.setServerTeam(7461);
+                // inst.setServer("systems-check", NetworkTableInstance.kDefaultPort4);
+                // inst.startDSClient();
 
-                while (true) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ex) {
-                        System.out.println("interrupted");
-                        return;
-                    }
-                }
+                // while (true) {
+                //     try {
+                //         Thread.sleep(1000);
+                //     } catch (InterruptedException ex) {
+                //         System.out.println("interrupted");
+                //         return;
+                //     }
+                // }
 
             }
         });

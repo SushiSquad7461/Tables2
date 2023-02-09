@@ -3,17 +3,27 @@ import java.awt.Component;
 import java.awt.Color;
 
 import javax.swing.JTable;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.table.DefaultTableCellRenderer;
 
 public class CustomTableCellRenderer extends DefaultTableCellRenderer{
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        if (row % 2 == 1) {
-          c.setBackground(Color.CYAN);
-        } else {
-          c.setBackground(Color.PINK);
-        }
-        return c;
+      Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      Color myColor;
+      if (row % 4 == 0) {
+        myColor = new ColorUIResource(241, 129, 165);
+        c.setBackground(myColor);
+      } else if (row % 4 == 1){
+        myColor = new ColorUIResource(253, 222, 248);
+        c.setBackground(myColor);
+      } else if (row % 4 == 2){
+        myColor = new ColorUIResource(111, 214, 255);
+        c.setBackground(myColor);
+      } else {
+        myColor = new ColorUIResource(152, 237, 222);
+        c.setBackground(myColor);
       }
+      return c;
+    }
   
 }
