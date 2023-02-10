@@ -111,6 +111,9 @@ public class TableTest extends JPanel
 
             dArrayPublisher.set(RowInputOutput.sendIncludedValues(output, table));
             dArrayPublisher.setDefault(null);
+            
+            cBooleanPublisher.set(true);
+            cBooleanPublisher.setDefault(false);
 
             rBooleanPublisher.set(true);
             rBooleanPublisher.setDefault(false);
