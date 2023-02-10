@@ -27,11 +27,12 @@ public class TableTest extends JPanel
     private JTextPane textPane;
     private SimpleAttributeSet keyWord = new SimpleAttributeSet();
 
-    // static NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    // NetworkTable dataTable = inst.getTable("dataTable"); //makes data table
+    static NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    NetworkTable dataTable = inst.getTable("dataTable"); //makes data table
 
-    // StringArrayPublisher dArrayPublisher = dataTable.getStringArrayTopic("tableValues").publish();;
-    // BooleanPublisher rBooleanPublisher = dataTable.getBooleanTopic("Running?").publish();
+    StringArrayPublisher dArrayPublisher = dataTable.getStringArrayTopic("tableValues").publish();
+    BooleanPublisher cBooleanPublisher = dataTable.getBooleanTopic("Changed?").publish();
+    BooleanPublisher rBooleanPublisher = dataTable.getBooleanTopic("Running?").publish();
 
     private String[] defaultInfo = {
         "subsystem0 motor1 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0", "subsystem0 motor2 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0",
@@ -91,8 +92,11 @@ public class TableTest extends JPanel
             String[] output = new String[table.getRowCount()]; //could get row count for included values
             System.out.println(Arrays.toString(RowInputOutput.sendValues(output, table)));
 
-            // dArrayPublisher.set(RowInputOutput.sendValues(output, table));
-            // dArrayPublisher.setDefault(null);
+            dArrayPublisher.set(RowInputOutput.sendValues(output, table));
+            dArrayPublisher.setDefault(null);
+
+            cBooleanPublisher.set(true);
+            cBooleanPublisher.setDefault(false);
 
             printOutput(messages); //subscriber needed to receive error messages 
         } else if (buttonName.equals(defaultButton)){ //use create and show gui to load new window instead, or do this
@@ -105,11 +109,11 @@ public class TableTest extends JPanel
             String[] output = new String[table.getRowCount()];
             System.out.println(Arrays.toString(RowInputOutput.sendIncludedValues(output, table)));
 
-            // dArrayPublisher.set(RowInputOutput.sendIncludedValues(output, table));
-            // dArrayPublisher.setDefault(null);
+            dArrayPublisher.set(RowInputOutput.sendIncludedValues(output, table));
+            dArrayPublisher.setDefault(null);
 
-            // rBooleanPublisher.set(true);
-            // rBooleanPublisher.setDefault(false);
+            rBooleanPublisher.set(true);
+            rBooleanPublisher.setDefault(false);
 
             printOutput(messages);
         } else {
@@ -165,10 +169,10 @@ public class TableTest extends JPanel
             public void run() {
                 createAndShowGUI();
 
-                // inst.startClient4("systems-check");
-                // inst.setServerTeam(7461);
-                // inst.setServer("systems-check", NetworkTableInstance.kDefaultPort4);
-                // inst.startDSClient();
+                inst.startClient4("systems-check");
+                inst.setServerTeam(7461);
+                inst.setServer("systems-check", NetworkTableInstance.kDefaultPort4);
+                inst.startDSClient();
 
                 // while (true) {
                 //     try {
