@@ -92,7 +92,7 @@ public class TableTest extends JPanel
             System.out.println(Arrays.toString(RowInputOutput.sendValues(output, table)));
 
             dArrayPublisher.set(RowInputOutput.sendValues(output, table));
-            dArrayPublisher.setDefault(null);
+            dArrayPublisher.setDefault(output);
 
             cBooleanPublisher.set(true);
             cBooleanPublisher.setDefault(false);
@@ -109,7 +109,7 @@ public class TableTest extends JPanel
             System.out.println(Arrays.toString(RowInputOutput.sendIncludedValues(output, table)));
 
             dArrayPublisher.set(RowInputOutput.sendIncludedValues(output, table));
-            dArrayPublisher.setDefault(null);
+            dArrayPublisher.setDefault(output);
             
             cBooleanPublisher.set(true);
             cBooleanPublisher.setDefault(false);
