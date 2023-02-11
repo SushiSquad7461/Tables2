@@ -16,7 +16,6 @@ import java.util.Arrays;
 
 public class TableTest extends JPanel 
                         implements ActionListener { 
-    
     private JTable table;
     private JButton pushAll;
     private JButton defaultButton;
@@ -28,7 +27,7 @@ public class TableTest extends JPanel
     private SimpleAttributeSet keyWord = new SimpleAttributeSet();
 
     static NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    NetworkTable dataTable = inst.getTable("dataTable"); //makes data table
+    NetworkTable dataTable = inst.getTable("dataTable"); 
 
     StringArrayPublisher dArrayPublisher = dataTable.getStringArrayTopic("tableValues").publish();
     BooleanPublisher cBooleanPublisher = dataTable.getBooleanTopic("Changed?").publish();
@@ -118,7 +117,6 @@ public class TableTest extends JPanel
             rBooleanPublisher.set(true);
             rBooleanPublisher.setDefault(false);
 
-            printOutput(messages);
         } else {
             String[] output = new String[table.getRowCount()];
             System.out.println(Arrays.toString(RowInputOutput.stopMotors(output, table)));
@@ -147,7 +145,7 @@ public class TableTest extends JPanel
     }
 
     // Create the GUI and show it. This is my window method
-    private static void createAndShowGUI() {
+    public static void createAndShowGUI() {
         //Create and set up the window.
         frame = new JFrame("tables");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -166,28 +164,5 @@ public class TableTest extends JPanel
         frame.setVisible(true);
     }
 
-    public static void main(String[] args) {
-        //creating and showing GUI.
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShowGUI();
-
-                inst.startClient4("systems-check");
-                inst.setServerTeam(7461);
-                inst.setServer("systems-check", NetworkTableInstance.kDefaultPort4);
-                inst.startDSClient();
-
-                // while (true) {
-                //     try {
-                //         Thread.sleep(1000);
-                //     } catch (InterruptedException ex) {
-                //         System.out.println("interrupted");
-                //         return;
-                //     }
-                // }
-
-            }
-        });
-    }
 }
 
