@@ -19,7 +19,6 @@ public class TableTest extends JPanel
     private JTable table;
     private JButton pushAll;
     private JButton defaultButton;
-    private JButton runMotors;
     private JButton stopMotors;
 
     private static JFrame frame;
@@ -34,9 +33,7 @@ public class TableTest extends JPanel
     BooleanPublisher rBooleanPublisher = dataTable.getBooleanTopic("Running?").publish();
 
     private String[] defaultInfo = {
-        "subsystem0 motor1 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0", "subsystem0 motor2 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0",
-        "subsystem0 motor3 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0", "subsystem0 motor4 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0",
-        "subsystem0 motor5 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0", "subsystem0 motor6 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0"
+        "subsystem0 motor1 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0", "subsystem0 motor2 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0"
     };
     private String[] messages = {"System is working", "Error: not working", "System is back to normal", "Error: not working"};
 
@@ -56,17 +53,13 @@ public class TableTest extends JPanel
         table.setDefaultRenderer(Object.class, new CustomTableCellRenderer());
 
         int rowCount = table.getModel().getRowCount();
-        pushAll = new Buttons("download all updates", rowCount);
+        pushAll = new Buttons("run motors", rowCount);
         pushAll.addActionListener(this);
         add(pushAll);
 
         defaultButton = new Buttons("load original defaults", rowCount);
         defaultButton.addActionListener(this);
         add(defaultButton);
-
-        runMotors = new Buttons("run included motors", rowCount);
-        runMotors.addActionListener(this);
-        add(runMotors);
 
         stopMotors = new Buttons("stop included motors", rowCount);
         stopMotors.addActionListener(this);
@@ -97,6 +90,9 @@ public class TableTest extends JPanel
             cBooleanPublisher.set(true);
             cBooleanPublisher.setDefault(false);
 
+            rBooleanPublisher.set(true);
+            rBooleanPublisher.setDefault(false);
+
             printOutput(messages); //subscriber needed to receive error messages 
         } else if (buttonName.equals(defaultButton)){ //use create and show gui to load new window instead, or do this
             TableTest newContentPane = new TableTest();
@@ -104,22 +100,10 @@ public class TableTest extends JPanel
             frame.setContentPane(newContentPane);
             frame.pack();
             frame.setVisible(true);
-        } else if (buttonName.equals(runMotors)){
-            String[] output = new String[table.getRowCount()];
-            System.out.println(Arrays.toString(RowInputOutput.sendIncludedValues(output, table)));
-
-            dArrayPublisher.set(RowInputOutput.sendIncludedValues(output, table));
-            dArrayPublisher.setDefault(output);
-            
-            cBooleanPublisher.set(true);
-            cBooleanPublisher.setDefault(false);
-
-            rBooleanPublisher.set(true);
-            rBooleanPublisher.setDefault(false);
-
         } else {
             String[] output = new String[table.getRowCount()];
             System.out.println(Arrays.toString(RowInputOutput.stopMotors(output, table)));
+            rBooleanPublisher.set(false);
         }
     }
 

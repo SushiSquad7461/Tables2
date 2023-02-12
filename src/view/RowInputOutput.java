@@ -12,7 +12,7 @@ public class RowInputOutput extends AbstractTableModel{
     "Is Coast?", "Motor Inversed?", "Current Limit",
     "Encoder Min", "Encoder Max", "Is Included?"};
     
-    private int rowCount = 6;
+    private int rowCount = 2;
     private Object[][] data = new Object[rowCount][columnNames.length]; //keep constant for now
 
     public RowInputOutput(String[] inputs) {
@@ -28,20 +28,6 @@ public class RowInputOutput extends AbstractTableModel{
     }
 
     public static String[] sendValues(String[] output, JTable table){
-        for (int rows = 0; rows < table.getRowCount(); rows++){
-            for (int cols = 0; cols < table.getColumnCount(); cols++){
-                Object value = table.getModel().getValueAt(rows, cols).toString();
-                if (value != "null"){
-                    output[rows] += (value) + " ";
-                }
-            }
-            output[rows] = output[rows].substring(4);
-        }
-
-        return output;
-    }
-
-    public static String[] sendIncludedValues(String[] output, JTable table){
         for (int rows = 0; rows < table.getRowCount(); rows++){
             if ((Boolean)table.getModel().getValueAt(rows, 11) != Boolean.FALSE){
                 for (int cols = 0; cols < table.getColumnCount(); cols++){
