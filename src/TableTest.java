@@ -83,7 +83,7 @@ public class TableTest extends JPanel
         if (buttonName.equals(pushAll)){
             String[] output = new String[table.getRowCount()]; //could get row count for included values
             System.out.println(Arrays.toString(RowInputOutput.sendValues(output, table)));
-
+            
             dArrayPublisher.set(RowInputOutput.sendValues(output, table));
             dArrayPublisher.setDefault(output);
 
