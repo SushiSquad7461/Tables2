@@ -28,34 +28,24 @@ public class RowInputOutput extends AbstractTableModel{
     }
 
     public static String[] sendValues(String[] output, JTable table){
+        System.out.println("called");
         for (int rows = 0; rows < table.getRowCount(); rows++){
             if ((Boolean)table.getModel().getValueAt(rows, 11) != Boolean.FALSE){
                 for (int cols = 0; cols < table.getColumnCount(); cols++){
                     Object value = table.getModel().getValueAt(rows, cols).toString();
                     output[rows] += (value) + " ";
                 }
-            }
-
-            if (output[rows] != null){
+            } else {
+                output[rows] = "containsNull";
+            } 
+            
+            if (output[rows] != null && !output[rows].equals("containsNull")){
                 output[rows] = output[rows].substring(4);
             }
         }
         return output;
     }
 
-    public static String[] stopMotors(String[] output, JTable table){
-        for (int rows = 0; rows < table.getRowCount(); rows++){
-            if ((Boolean)table.getModel().getValueAt(rows, 11) == Boolean.TRUE){
-                Object value = table.getModel().getValueAt(rows, 1).toString();
-                output[rows] += (value) + " stop ";
-            }
-
-            if (output[rows] != null){
-                output[rows] = output[rows].substring(4);
-            }
-        }
-        return output;
-    }
     
     public int getColumnCount() {
         return columnNames.length;

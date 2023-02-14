@@ -29,7 +29,6 @@ public class TableTest extends JPanel
     NetworkTable dataTable = inst.getTable("dataTable"); 
 
     StringArrayPublisher dArrayPublisher = dataTable.getStringArrayTopic("tableValues").publish();
-    BooleanPublisher cBooleanPublisher = dataTable.getBooleanTopic("Changed?").publish();
     BooleanPublisher rBooleanPublisher = dataTable.getBooleanTopic("Running?").publish();
 
     private String[] defaultInfo = {
@@ -82,13 +81,9 @@ public class TableTest extends JPanel
         Object buttonName = event.getSource();
         if (buttonName.equals(pushAll)){
             String[] output = new String[table.getRowCount()]; //could get row count for included values
-            System.out.println(Arrays.toString(RowInputOutput.sendValues(output, table)));
             
             dArrayPublisher.set(RowInputOutput.sendValues(output, table));
             dArrayPublisher.setDefault(output);
-
-            cBooleanPublisher.set(true);
-            cBooleanPublisher.setDefault(false);
 
             rBooleanPublisher.set(true);
             rBooleanPublisher.setDefault(false);
@@ -100,9 +95,7 @@ public class TableTest extends JPanel
             frame.setContentPane(newContentPane);
             frame.pack();
             frame.setVisible(true);
-        } else {
-            String[] output = new String[table.getRowCount()];
-            System.out.println(Arrays.toString(RowInputOutput.stopMotors(output, table)));
+        } else if (buttonName.equals(stopMotors)){
             rBooleanPublisher.set(false);
         }
     }
