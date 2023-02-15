@@ -73,8 +73,6 @@ public class TableTest extends JPanel
         picLabel.setIcon(image);
         table.setBackground(Color.WHITE);
         add(picLabel);
-
-
     }
  
     public void actionPerformed(ActionEvent event) {
@@ -88,7 +86,6 @@ public class TableTest extends JPanel
             rBooleanPublisher.set(true);
             rBooleanPublisher.setDefault(false);
 
-            printOutput(messages); //subscriber needed to receive error messages 
         } else if (buttonName.equals(defaultButton)){ //use create and show gui to load new window instead, or do this
             TableTest newContentPane = new TableTest();
             newContentPane.setOpaque(true); 
