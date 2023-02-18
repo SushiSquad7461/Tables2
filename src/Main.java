@@ -7,12 +7,12 @@ public class Main {
         //creating and showing GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                TableTest.createAndShowGUI();
                 NetworkTableInstance inst = NetworkTableInstance.getDefault();
                 inst.startClient4("systems-check");
                 inst.setServerTeam(7461);
                 inst.setServer("systems-check", NetworkTableInstance.kDefaultPort4);
                 inst.startDSClient();
+                TableTest.createAndShowGUI();
 
                 // while (true) {
                 //     try {

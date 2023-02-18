@@ -12,10 +12,12 @@ public class RowInputOutput extends AbstractTableModel{
     "Is Coast?", "Motor Inversed?", "Current Limit",
     "Encoder Min", "Encoder Max", "Is Included?"};
     
-    private int rowCount = 2;
-    private Object[][] data = new Object[rowCount][columnNames.length]; //keep constant for now
+    private int rowCount;
+    private Object[][] data;
 
     public RowInputOutput(String[] inputs) {
+        rowCount = inputs.length;
+        data = new Object[rowCount][columnNames.length];
         for (int i = 0; i < inputs.length; i++){//read network table string array
             MotorInfo motorInfo = new MotorInfo(inputs[i]);
             data[i] = new Object[]{
