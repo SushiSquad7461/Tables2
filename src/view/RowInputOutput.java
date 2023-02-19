@@ -7,8 +7,8 @@ import src.logic.MotorInfo;
 public class RowInputOutput extends AbstractTableModel{
 
     private String[] columnNames = {
-    "Subsystem", "MotorNum", "PdhPort", 
-    "CanID", "Const Speed", "Joystick Scale Factor", //preset
+    "Subsystem", "MotorNum", "CanID", 
+    "PdhPort", "Const Speed", "Joystick Scale Factor", //preset
     "Is Coast?", "Motor Inversed?", "Current Limit",
     "Encoder Min", "Encoder Max", "Is Included?"};
     

@@ -2,6 +2,7 @@ package src;
 import java.awt.*;
 
 import javax.swing.*;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.table.*;
 import javax.swing.text.*;
 
@@ -25,18 +26,19 @@ public class TableTest extends JPanel
     private JTextPane textPane;
     private SimpleAttributeSet keyWord = new SimpleAttributeSet();
 
-    NetworkTableInstance inst;
-    NetworkTable dataTable; 
+    private NetworkTableInstance inst;
+    private NetworkTable dataTable; 
 
 
-    StringArrayPublisher dArrayPublisher;
-    BooleanPublisher rBooleanPublisher;
+    private StringArrayPublisher dArrayPublisher;
+    private BooleanPublisher rBooleanPublisher;
 
-    private String[] defaultInfo = {"subsystem1 motor1 12 13 0.0 0.0 0 0 0.0 0.0 0.0 0"};
-    private String[] messages = {"System is working", "Error: not working", "System is back to normal", "Error: not working"};
+    private String[] errorStrings;
+    private String[] messages = {"testing"};
 
-    StringArraySubscriber registeredMotors;
-    
+    private StringArraySubscriber registeredMotors;
+    private StringArraySubscriber allErrors;
+
     public TableTest() {
         super();
         inst = NetworkTableInstance.getDefault();
@@ -45,6 +47,7 @@ public class TableTest extends JPanel
         dArrayPublisher = dataTable.getStringArrayTopic("tableValues").publish();
         rBooleanPublisher = dataTable.getBooleanTopic("Running?").publish();
         this.registeredMotors = dataTable.getStringArrayTopic("motors").subscribe(messages);
+        this.allErrors = dataTable.getStringArrayTopic("errors").subscribe(messages);
 
         try { Thread.sleep(1000); } catch (Exception e) {}
 
@@ -72,6 +75,8 @@ public class TableTest extends JPanel
         defaultButton.addActionListener(this);
         add(defaultButton);
 
+        defaultButton.setBackground(new ColorUIResource(209, 237, 245));
+
         stopMotors = new Buttons("stop included motors", rowCount);
         stopMotors.addActionListener(this);
         add(stopMotors);
@@ -81,10 +86,16 @@ public class TableTest extends JPanel
         add(new JScrollPane(textPane));
 
         JLabel picLabel = new JLabel("");
-        ImageIcon image = new ImageIcon(new ImageIcon("/Users/nitya/java/tables_copy/assets/images/img2.png").getImage().getScaledInstance(2000, 50, Image.SCALE_SMOOTH));
+        ImageIcon image = new ImageIcon(new ImageIcon("assets\\images\\img2.png").getImage().getScaledInstance(2000, 50, Image.SCALE_SMOOTH));
         picLabel.setIcon(image);
         table.setBackground(Color.WHITE);
+        table.setSelectionBackground(new ColorUIResource(209, 237, 250));
         add(picLabel);
+
+        SimpleAttributeSet attributeSet = new SimpleAttributeSet();
+        StyleConstants.setBackground(attributeSet, Color.CYAN);
+        textPane.setBackground(new ColorUIResource(209, 235, 250));
+
     }
  
     public void actionPerformed(ActionEvent event) {
@@ -97,6 +108,9 @@ public class TableTest extends JPanel
 
             rBooleanPublisher.set(true);
             rBooleanPublisher.setDefault(false);
+
+            errorStrings = allErrors.get();
+            printOutput(errorStrings);
 
         } else if (buttonName.equals(defaultButton)){ //use create and show gui to load new window instead, or do this
             TableTest newContentPane = new TableTest();
@@ -130,11 +144,6 @@ public class TableTest extends JPanel
       
     }
 
-
-    public String[] getRegisteredMotors() {
-        return registeredMotors.get();
-    }
-
     // Create the GUI and show it. This is my window method
     public static void createAndShowGUI() {
         //Create and set up the window.
@@ -148,7 +157,7 @@ public class TableTest extends JPanel
         // frame.add(background);
 
         TableTest newContentPane = new TableTest();
-
+        newContentPane.setBackground(Color.white);
         newContentPane.setOpaque(true); //content panes must be opaque.
         frame.add(newContentPane);
         //Display the window.
