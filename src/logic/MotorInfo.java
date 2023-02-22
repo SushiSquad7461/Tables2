@@ -8,7 +8,7 @@ public class MotorInfo {
     public String canID;
 
     public double speed;
-    public double joystickScale;
+    public boolean joystickScale;
 
     public boolean coast;
     public boolean motorInversed;
@@ -26,7 +26,7 @@ public class MotorInfo {
         canID = inputList[3];
 
         speed = Double.parseDouble(inputList[4]);
-        joystickScale = Double.parseDouble(inputList[5]);
+        joystickScale = inputList[5] == "false";
         coast = inputList[6] == "false"; //could accept int
         motorInversed = inputList[7] == "false";
         currLimit = Double.parseDouble(inputList[8]);
