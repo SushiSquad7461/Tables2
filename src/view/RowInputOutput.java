@@ -7,10 +7,10 @@ import src.logic.MotorInfo;
 public class RowInputOutput extends AbstractTableModel{
 
     private String[] columnNames = {
-    "Subsystem", "MotorNum", "CanID", 
+    "Subsystem", "MotorName", "CanID", 
     "PdhPort", "Const Speed", "Joystick Scale Factor", //preset
-    "Is Coast?", "Motor Inversed?", "Current Limit",
-    "Encoder Min", "Encoder Max", "Is Included?"};
+    "Is Coast?", "Invert Motor?", "Current Limit",
+    "Encoder Min", "Encoder Max", "Use Motor?"};
     
     private int rowCount;
     private Object[][] data;
@@ -40,7 +40,7 @@ public class RowInputOutput extends AbstractTableModel{
             } else {
                 output[rows] = "containsNull";
             } 
-            
+
             if (output[rows] != null && !output[rows].equals("containsNull")){
                 output[rows] = output[rows].substring(4);
             }

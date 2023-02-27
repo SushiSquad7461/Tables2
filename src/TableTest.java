@@ -77,7 +77,7 @@ public class TableTest extends JPanel
 
         defaultButton.setBackground(new ColorUIResource(209, 237, 245));
 
-        stopMotors = new Buttons("stop included motors", rowCount);
+        stopMotors = new Buttons("stop motors", rowCount);
         stopMotors.addActionListener(this);
         add(stopMotors);
 
@@ -111,7 +111,6 @@ public class TableTest extends JPanel
 
             errorStrings = allErrors.get();
             printOutput(errorStrings);
-
         } else if (buttonName.equals(defaultButton)){ //use create and show gui to load new window instead, or do this
             TableTest newContentPane = new TableTest();
             newContentPane.setOpaque(true); 
@@ -125,16 +124,19 @@ public class TableTest extends JPanel
 
     private void printOutput(String[] messages){ 
         StyledDocument doc = textPane.getStyledDocument();
+        doc.setCharacterAttributes(ALLBITS, ABORT, keyWord, getFocusTraversalKeysEnabled());
         int totalCount = 0;
         int count = 0;
         try {
             for (String message : messages) {
                 totalCount++;
-                if (message.contains("not working")) {
-                    doc.insertString(doc.getLength(), message + "\n", keyWord);
-                    count++;
-                } else {
-                    doc.insertString(doc.getLength(), message + "\n", null);
+                if (!message.contains("")){
+                    if (message.contains("not working")) {
+                        doc.insertString(doc.getLength(), message + "\n", keyWord);
+                        count++;
+                    } else {
+                        doc.insertString(doc.getLength(), message + "\n", null);
+                    }
                 }
             }
             doc.insertString(doc.getLength(), count + " errors of " + totalCount + "\n", keyWord);
@@ -150,11 +152,6 @@ public class TableTest extends JPanel
         frame = new JFrame("tables");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //Create and set up the content pane.
-
-        // ImageIcon icon = new ImageIcon("/Users/nitya/java/tables_copy/assets/images/img1.png");
-        // JLabel background = new JLabel(icon);
-        // background.setBounds(0, 50, 500, 200);
-        // frame.add(background);
 
         TableTest newContentPane = new TableTest();
         newContentPane.setBackground(Color.white);
