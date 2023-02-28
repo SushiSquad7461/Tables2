@@ -8,9 +8,9 @@ public class RowInputOutput extends AbstractTableModel{
 
     private String[] columnNames = {
     "Subsystem", "MotorName", "CanID", 
-    "PdhPort", "Const Speed", "Joystick Scale Factor", //preset
+    "PdhPort", "Const Speed", "Joystick On?",
     "Is Coast?", "Invert Motor?", "Current Limit",
-    "Encoder Min", "Encoder Max", "Use Motor?"};
+    "Encoder Min", "Encoder Max", "Solenoid On?", "Use Motor?"};
     
     private int rowCount;
     private Object[][] data;
@@ -21,10 +21,10 @@ public class RowInputOutput extends AbstractTableModel{
         for (int i = 0; i < inputs.length; i++){//read network table string array
             MotorInfo motorInfo = new MotorInfo(inputs[i]);
             data[i] = new Object[]{
-            motorInfo.subSystem, motorInfo.motorName, motorInfo.pdhPort, 
-            motorInfo.canID, motorInfo.speed, motorInfo.joystickScale,
-            motorInfo.coast, motorInfo.motorInversed, motorInfo.currLimit, 
-            motorInfo.encoderMin, motorInfo.encoderMax, motorInfo.isIncluded
+                motorInfo.subSystem, motorInfo.motorName, motorInfo.pdhPort, 
+                motorInfo.canID, motorInfo.speed, motorInfo.joystickScale,
+                motorInfo.coast, motorInfo.motorInversed, motorInfo.currLimit, 
+                motorInfo.encoderMin, motorInfo.encoderMax, motorInfo.solenoidOn, motorInfo.isIncluded
             };
         }
     }
@@ -32,7 +32,7 @@ public class RowInputOutput extends AbstractTableModel{
     public static String[] sendValues(String[] output, JTable table){
         System.out.println("called");
         for (int rows = 0; rows < table.getRowCount(); rows++){
-            if ((Boolean)table.getModel().getValueAt(rows, 11) != Boolean.FALSE){
+            if ((Boolean)table.getModel().getValueAt(rows, table.getColumnCount() - 1) != Boolean.FALSE){
                 for (int cols = 0; cols < table.getColumnCount(); cols++){
                     Object value = table.getModel().getValueAt(rows, cols).toString();
                     output[rows] += (value) + " ";

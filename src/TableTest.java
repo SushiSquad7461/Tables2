@@ -35,6 +35,9 @@ public class TableTest extends JPanel
 
     private String[] errorStrings;
     private String[] messages = {"testing"};
+    private String[] testingOut = {"sub solenoid 12 13 0.0 0 0 0 0.0 -2.0 0.0 0 0", 
+                                      "sub motor 12 13 0.0 0 0 0 0.0 -2.0 0.0 0 0",
+                                      "sub motor 15 23 0.0 0 0 0 0.0 -2.0 0.0 0 0"}; //only to test gui
 
     private StringArraySubscriber registeredMotors;
     private StringArraySubscriber allErrors;
@@ -55,7 +58,7 @@ public class TableTest extends JPanel
         System.out.println(Arrays.toString(motors));
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        table = new JTable(new RowInputOutput(motors));
+        table = new JTable(new RowInputOutput(testingOut)); //change to motors when testing with robot
         table.setPreferredScrollableViewportSize(new Dimension(400, 200));
         table.setFillsViewportHeight(true);
         table.setFont(new Font("Sushi Sans", Font.BOLD, 18));
@@ -67,7 +70,7 @@ public class TableTest extends JPanel
         table.setDefaultRenderer(Object.class, new CustomTableCellRenderer());
 
         int rowCount = table.getModel().getRowCount();
-        pushAll = new Buttons("run motors", rowCount);
+        pushAll = new Buttons("run all", rowCount);
         pushAll.addActionListener(this);
         add(pushAll);
 
@@ -77,7 +80,7 @@ public class TableTest extends JPanel
 
         defaultButton.setBackground(new ColorUIResource(209, 237, 245));
 
-        stopMotors = new Buttons("stop motors", rowCount);
+        stopMotors = new Buttons("stop all", rowCount);
         stopMotors.addActionListener(this);
         add(stopMotors);
 
@@ -94,14 +97,13 @@ public class TableTest extends JPanel
 
         SimpleAttributeSet attributeSet = new SimpleAttributeSet();
         StyleConstants.setBackground(attributeSet, Color.CYAN);
-        textPane.setBackground(new ColorUIResource(209, 235, 250));
-
+        textPane.setBackground(new ColorUIResource(209, 237, 250));
     }
  
     public void actionPerformed(ActionEvent event) {
         Object buttonName = event.getSource();
         if (buttonName.equals(pushAll)){
-            String[] output = new String[table.getRowCount()]; //could get row count for included values
+            String[] output = new String[table.getRowCount()];
             
             dArrayPublisher.set(RowInputOutput.sendValues(output, table));
             dArrayPublisher.setDefault(output);
@@ -130,7 +132,7 @@ public class TableTest extends JPanel
         try {
             for (String message : messages) {
                 totalCount++;
-                if (!message.contains("")){
+                if (!message.equals("")){
                     if (message.contains("not working")) {
                         doc.insertString(doc.getLength(), message + "\n", keyWord);
                         count++;
@@ -161,6 +163,5 @@ public class TableTest extends JPanel
         frame.pack();
         frame.setVisible(true);
     }
-
 }
 

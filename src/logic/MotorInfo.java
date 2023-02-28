@@ -1,7 +1,7 @@
 package src.logic;
 
 public class MotorInfo {
-    String[] inputList; //12 items long
+    String[] inputList; //13 items long
     public String subSystem;
     public String motorName;
     public String pdhPort;
@@ -12,6 +12,7 @@ public class MotorInfo {
 
     public boolean coast;
     public boolean motorInversed;
+    public boolean solenoidOn;
     public boolean isIncluded;
 
     public double currLimit;
@@ -32,10 +33,7 @@ public class MotorInfo {
         currLimit = Double.parseDouble(inputList[8]);
         encoderMin = Double.parseDouble(inputList[9]);
         encoderMax = Double.parseDouble(inputList[10]);
-        isIncluded = inputList[11] == "false";
-    }
-
-    public void motorName(double speed2, boolean coast2, boolean encoderDir2, int currLimit2,
-            double encoderMin2, double encoderMax2) {
+        solenoidOn = inputList[11] == "false";
+        isIncluded = inputList[12] == "false";
     }
 }
