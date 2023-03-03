@@ -7,10 +7,10 @@ import src.logic.MotorInfo;
 public class RowInputOutput extends AbstractTableModel{
 
     private String[] columnNames = {
-    "Subsystem", "MotorName", "CanID", 
-    "PdhPort", "Const Speed", "Joystick On?",
+    "Subsystem", "DeviceName", "CanID", 
+    "PdhPort", "Speed", "Controller?",
     "Is Coast?", "Invert Motor?", "Current Limit",
-    "Encoder Min", "Encoder Max", "Solenoid On?", "Use Motor?"};
+    "Min Ticks", "Max Ticks", "Solenoid On?", "Use Device?"};
     
     private int rowCount;
     private Object[][] data;

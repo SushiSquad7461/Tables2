@@ -34,6 +34,7 @@ public class TableTest extends JPanel
     private BooleanPublisher rBooleanPublisher;
 
     private String[] errorStrings;
+    private String[] temp;
     private String[] messages = {"testing"};
     private String[] testingOut = {"sub solenoid 12 13 0.0 0 0 0 0.0 -2.0 0.0 0 0", 
                                       "sub motor 12 13 0.0 0 0 0 0.0 -2.0 0.0 0 0",
@@ -58,7 +59,7 @@ public class TableTest extends JPanel
         System.out.println(Arrays.toString(motors));
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        table = new JTable(new RowInputOutput(testingOut)); //change to motors when testing with robot
+        table = new JTable(new RowInputOutput(motors)); //change to motors when testing with robot
         table.setPreferredScrollableViewportSize(new Dimension(400, 200));
         table.setFillsViewportHeight(true);
         table.setFont(new Font("Sushi Sans", Font.BOLD, 18));
@@ -112,7 +113,11 @@ public class TableTest extends JPanel
             rBooleanPublisher.setDefault(false);
 
             errorStrings = allErrors.get();
-            printOutput(errorStrings);
+            if (!Arrays.equals(errorStrings, temp)){
+                printOutput();
+            }
+            temp = errorStrings;
+
         } else if (buttonName.equals(defaultButton)){ //use create and show gui to load new window instead, or do this
             TableTest newContentPane = new TableTest();
             newContentPane.setOpaque(true); 
@@ -124,16 +129,17 @@ public class TableTest extends JPanel
         }
     }
 
-    private void printOutput(String[] messages){ 
+    private void printOutput(){ 
+        String[] messages = allErrors.get();
         StyledDocument doc = textPane.getStyledDocument();
         doc.setCharacterAttributes(ALLBITS, ABORT, keyWord, getFocusTraversalKeysEnabled());
         int totalCount = 0;
         int count = 0;
         try {
             for (String message : messages) {
-                totalCount++;
+                totalCount = messages.length;
                 if (!message.equals("")){
-                    if (message.contains("not working")) {
+                    if (message.contains("error")) {
                         doc.insertString(doc.getLength(), message + "\n", keyWord);
                         count++;
                     } else {
