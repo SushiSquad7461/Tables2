@@ -23,8 +23,8 @@ public class MotorInfo {
         inputList = input.split(" ");
         subSystem = inputList[0];
         motorName = inputList[1];
-        pdhPort = inputList[2];
-        canID = inputList[3];
+        canID = inputList[2];
+        pdhPort = inputList[3];
 
         speed = Double.parseDouble(inputList[4]);
         joystickScale = inputList[5] == "false";

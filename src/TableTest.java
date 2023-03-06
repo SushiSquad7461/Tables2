@@ -29,13 +29,12 @@ public class TableTest extends JPanel
     private NetworkTableInstance inst;
     private NetworkTable dataTable; 
 
-
     private StringArrayPublisher dArrayPublisher;
     private BooleanPublisher rBooleanPublisher;
 
     private String[] errorStrings;
     private String[] temp;
-    private String[] messages = {"testing"};
+    private String[] messages = {"all is well!"};
     private String[] testingOut = {"sub solenoid 12 13 0.0 0 0 0 0.0 -2.0 0.0 0 0", 
                                       "sub motor 12 13 0.0 0 0 0 0.0 -2.0 0.0 0 0",
                                       "sub motor 15 23 0.0 0 0 0 0.0 -2.0 0.0 0 0"}; //only to test gui
@@ -60,8 +59,9 @@ public class TableTest extends JPanel
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         table = new JTable(new RowInputOutput(motors)); //change to motors when testing with robot
-        table.setPreferredScrollableViewportSize(new Dimension(400, 200));
+        table.setPreferredScrollableViewportSize(new Dimension(1000, 500));
         table.setFillsViewportHeight(true);
+        table.setMinimumSize(getMinimumSize());
         table.setFont(new Font("Sushi Sans", Font.BOLD, 18));
         table.getTableHeader().setFont(new Font("Sushi Sans", Font.PLAIN, 17));
         table.setRowHeight(27);
@@ -99,10 +99,16 @@ public class TableTest extends JPanel
         SimpleAttributeSet attributeSet = new SimpleAttributeSet();
         StyleConstants.setBackground(attributeSet, Color.CYAN);
         textPane.setBackground(new ColorUIResource(209, 237, 250));
+
+        Timer timer = new Timer(300, this);
+        timer.setInitialDelay(1000);
+        timer.start();
+
     }
  
     public void actionPerformed(ActionEvent event) {
         Object buttonName = event.getSource();
+        printOutput();
         if (buttonName.equals(pushAll)){
             String[] output = new String[table.getRowCount()];
             
@@ -111,12 +117,6 @@ public class TableTest extends JPanel
 
             rBooleanPublisher.set(true);
             rBooleanPublisher.setDefault(false);
-
-            errorStrings = allErrors.get();
-            if (!Arrays.equals(errorStrings, temp)){
-                printOutput();
-            }
-            temp = errorStrings;
 
         } else if (buttonName.equals(defaultButton)){ //use create and show gui to load new window instead, or do this
             TableTest newContentPane = new TableTest();
@@ -131,28 +131,35 @@ public class TableTest extends JPanel
 
     private void printOutput(){ 
         String[] messages = allErrors.get();
+        System.out.print(Arrays.toString(messages));
         StyledDocument doc = textPane.getStyledDocument();
         doc.setCharacterAttributes(ALLBITS, ABORT, keyWord, getFocusTraversalKeysEnabled());
         int totalCount = 0;
         int count = 0;
+        int printCount = 0;
         try {
             for (String message : messages) {
                 totalCount = messages.length;
                 if (!message.equals("")){
-                    if (message.contains("error")) {
+                    if (message.contains("Error")) {
                         doc.insertString(doc.getLength(), message + "\n", keyWord);
                         count++;
                     } else {
                         doc.insertString(doc.getLength(), message + "\n", null);
                     }
+                    printCount++;
                 }
             }
-            doc.insertString(doc.getLength(), count + " errors of " + totalCount + "\n", keyWord);
+
+            if (printCount >= 30) {
+                doc.remove(0, doc.getLength());
+            }
+            doc.insertString(doc.getLength(), count + " motor has errors of " + totalCount + "\n", keyWord);
         } catch(BadLocationException e){
             e.printStackTrace();
         }
-      
     }
+
 
     // Create the GUI and show it. This is my window method
     public static void createAndShowGUI() {

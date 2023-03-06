@@ -21,8 +21,8 @@ public class RowInputOutput extends AbstractTableModel{
         for (int i = 0; i < inputs.length; i++){//read network table string array
             MotorInfo motorInfo = new MotorInfo(inputs[i]);
             data[i] = new Object[]{
-                motorInfo.subSystem, motorInfo.motorName, motorInfo.pdhPort, 
-                motorInfo.canID, motorInfo.speed, motorInfo.joystickScale,
+                motorInfo.subSystem, motorInfo.motorName, motorInfo.canID, 
+                motorInfo.pdhPort, motorInfo.speed, motorInfo.joystickScale,
                 motorInfo.coast, motorInfo.motorInversed, motorInfo.currLimit, 
                 motorInfo.encoderMin, motorInfo.encoderMax, motorInfo.solenoidOn, motorInfo.isIncluded
             };
@@ -32,16 +32,13 @@ public class RowInputOutput extends AbstractTableModel{
     public static String[] sendValues(String[] output, JTable table){
         System.out.println("called");
         for (int rows = 0; rows < table.getRowCount(); rows++){
-            if ((Boolean)table.getModel().getValueAt(rows, table.getColumnCount() - 1) != Boolean.FALSE){
-                for (int cols = 0; cols < table.getColumnCount(); cols++){
-                    Object value = table.getModel().getValueAt(rows, cols).toString();
-                    output[rows] += (value) + " ";
-                }
-            } else {
-                output[rows] = "containsNull";
-            } 
+            for (int cols = 0; cols < table.getColumnCount(); cols++){
+                Object value = table.getModel().getValueAt(rows, cols).toString();
 
-            if (output[rows] != null && !output[rows].equals("containsNull")){
+                output[rows] += (value) + " ";
+            }
+
+            if (output[rows] != null) {
                 output[rows] = output[rows].substring(4);
             }
         }
