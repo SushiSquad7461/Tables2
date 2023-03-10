@@ -69,13 +69,14 @@ public class RowInputOutput extends AbstractTableModel{
 
     //if col of 3 at row(s) != null || != 0, set col of 4 at row(s) to false and vice versa
     public boolean isCellEditable(int row, int col) {
-        // Double col4Value = Double.parseDouble(getValueAt(row, 4).toString());
-        // Double col5Value = Double.parseDouble(getValueAt(row, 5).toString());
-        // if (col == 5 && col4Value != 0.0){
-        //     return false;
-        // } else if (col == 4 && col5Value != 0.0){
-        //     return false;
-        // }
+        Double col4Value = Double.parseDouble(getValueAt(row, 4).toString());
+        Double col5Value = Double.parseDouble(getValueAt(row, 5).toString());
+        if (col == 5 && col4Value != 0.0){
+            return false;
+        } else if (col == 4 && col5Value != 0.0){
+            return false;
+        }
+
         return true;
     }
 

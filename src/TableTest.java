@@ -18,9 +18,11 @@ import java.util.Arrays;
 public class TableTest extends JPanel 
                         implements ActionListener { 
     private JTable table;
+
     private JButton pushAll;
     private JButton defaultButton;
     private JButton stopMotors;
+    private JButton runTwitchTest;
 
     private static JFrame frame;
     private JTextPane textPane;
@@ -29,15 +31,16 @@ public class TableTest extends JPanel
     private NetworkTableInstance inst;
     private NetworkTable dataTable; 
 
-    private StringArrayPublisher dArrayPublisher;
-    private BooleanPublisher rBooleanPublisher;
+    private StringArrayPublisher tableArray;
+    private BooleanPublisher running;
+    private BooleanPublisher twitchTest;
 
-    private String[] errorStrings;
-    private String[] temp;
+    private boolean runningTwitchTest;
+
     private String[] messages = {"all is well!"};
     private String[] testingOut = {"sub solenoid 12 13 0.0 0 0 0 0.0 -2.0 0.0 0 0", 
-                                      "sub motor 12 13 0.0 0 0 0 0.0 -2.0 0.0 0 0",
-                                      "sub motor 15 23 0.0 0 0 0 0.0 -2.0 0.0 0 0"}; //only to test gui
+                                    "sub motor 12 13 0.0 0 0 0 0.0 -2.0 0.0 0 0",
+                                    "sub motor 15 23 0.0 0 0 0 0.0 -2.0 0.0 0 0"}; //only to test gui
 
     private StringArraySubscriber registeredMotors;
     private StringArraySubscriber allErrors;
@@ -47,8 +50,10 @@ public class TableTest extends JPanel
         inst = NetworkTableInstance.getDefault();
         dataTable = inst.getTable("dataTable");
 
-        dArrayPublisher = dataTable.getStringArrayTopic("tableValues").publish();
-        rBooleanPublisher = dataTable.getBooleanTopic("Running?").publish();
+        tableArray = dataTable.getStringArrayTopic("tableValues").publish();
+        running = dataTable.getBooleanTopic("Running?").publish();
+        twitchTest = dataTable.getBooleanTopic("twitchTest?").publish();
+
         this.registeredMotors = dataTable.getStringArrayTopic("motors").subscribe(messages);
         this.allErrors = dataTable.getStringArrayTopic("errors").subscribe(messages);
 
@@ -58,13 +63,14 @@ public class TableTest extends JPanel
         System.out.println(Arrays.toString(motors));
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        table = new JTable(new RowInputOutput(motors)); //change to motors when testing with robot
+        table = new JTable(new RowInputOutput(testingOut)); //change to motors when testing with robot
         table.setPreferredScrollableViewportSize(new Dimension(1000, 500));
         table.setFillsViewportHeight(true);
-        table.setMinimumSize(getMinimumSize());
+        table.setMinimumSize(new Dimension(500, 500));
         table.setFont(new Font("Sushi Sans", Font.BOLD, 18));
         table.getTableHeader().setFont(new Font("Sushi Sans", Font.PLAIN, 17));
         table.setRowHeight(27);
+        setLayout(new BorderLayout());
 
         add(new JScrollPane(table));
         ((DefaultTableCellRenderer)table.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);  
@@ -84,6 +90,10 @@ public class TableTest extends JPanel
         stopMotors = new Buttons("stop all", rowCount);
         stopMotors.addActionListener(this);
         add(stopMotors);
+
+        runTwitchTest = new Buttons("run twitch test", rowCount);
+        runTwitchTest.addActionListener(this);
+        add(runTwitchTest);
 
         textPane = new JTextPane();
         StyleConstants.setForeground(keyWord, Color.RED);
@@ -112,11 +122,11 @@ public class TableTest extends JPanel
         if (buttonName.equals(pushAll)){
             String[] output = new String[table.getRowCount()];
             
-            dArrayPublisher.set(RowInputOutput.sendValues(output, table));
-            dArrayPublisher.setDefault(output);
+            tableArray.set(RowInputOutput.sendValues(output, table));
+            tableArray.setDefault(output);
 
-            rBooleanPublisher.set(true);
-            rBooleanPublisher.setDefault(false);
+            running.set(true);
+            running.setDefault(false);
 
         } else if (buttonName.equals(defaultButton)){ //use create and show gui to load new window instead, or do this
             TableTest newContentPane = new TableTest();
@@ -125,7 +135,11 @@ public class TableTest extends JPanel
             frame.pack();
             frame.setVisible(true);
         } else if (buttonName.equals(stopMotors)){
-            rBooleanPublisher.set(false);
+            running.set(false);
+        } else if (buttonName.equals(runTwitchTest)) {
+            twitchTest.set(true);
+            runningTwitchTest = true;
+            twitchTest.setDefault(false);
         }
     }
 
