@@ -18,11 +18,11 @@ import java.util.Arrays;
 public class TableTest extends JPanel 
                         implements ActionListener { 
     private JTable table;
-
     private JButton pushAll;
     private JButton defaultButton;
     private JButton stopMotors;
     private JButton runTwitchTest;
+
 
     private static JFrame frame;
     private JTextPane textPane;
@@ -31,16 +31,17 @@ public class TableTest extends JPanel
     private NetworkTableInstance inst;
     private NetworkTable dataTable; 
 
+
     private StringArrayPublisher tableArray;
     private BooleanPublisher running;
     private BooleanPublisher twitchTest;
 
-    private boolean runningTwitchTest;
-
+    private boolean runningTwitchTest;    
     private String[] messages = {"all is well!"};
+    
     private String[] testingOut = {"sub solenoid 12 13 0.0 0 0 0 0.0 -2.0 0.0 0 0", 
-                                    "sub motor 12 13 0.0 0 0 0 0.0 -2.0 0.0 0 0",
-                                    "sub motor 15 23 0.0 0 0 0 0.0 -2.0 0.0 0 0"}; //only to test gui
+                                      "sub motor 12 13 0.0 0 0 0 0.0 -2.0 0.0 0 0",
+                                      "sub motor 15 23 0.0 0 0 0 0.0 -2.0 0.0 0 0"}; //only to test gui
 
     private StringArraySubscriber registeredMotors;
     private StringArraySubscriber allErrors;
@@ -53,7 +54,6 @@ public class TableTest extends JPanel
         tableArray = dataTable.getStringArrayTopic("tableValues").publish();
         running = dataTable.getBooleanTopic("Running?").publish();
         twitchTest = dataTable.getBooleanTopic("twitchTest?").publish();
-
         this.registeredMotors = dataTable.getStringArrayTopic("motors").subscribe(messages);
         this.allErrors = dataTable.getStringArrayTopic("errors").subscribe(messages);
 
@@ -63,14 +63,13 @@ public class TableTest extends JPanel
         System.out.println(Arrays.toString(motors));
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        table = new JTable(new RowInputOutput(testingOut)); //change to motors when testing with robot
+        table = new JTable(new RowInputOutput(motors)); //change to motors when testing with robot
         table.setPreferredScrollableViewportSize(new Dimension(1000, 500));
         table.setFillsViewportHeight(true);
         table.setMinimumSize(new Dimension(500, 500));
         table.setFont(new Font("Sushi Sans", Font.BOLD, 18));
         table.getTableHeader().setFont(new Font("Sushi Sans", Font.PLAIN, 17));
         table.setRowHeight(27);
-        setLayout(new BorderLayout());
 
         add(new JScrollPane(table));
         ((DefaultTableCellRenderer)table.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);  
@@ -127,7 +126,6 @@ public class TableTest extends JPanel
 
             running.set(true);
             running.setDefault(false);
-
         } else if (buttonName.equals(defaultButton)){ //use create and show gui to load new window instead, or do this
             TableTest newContentPane = new TableTest();
             newContentPane.setOpaque(true); 
@@ -145,12 +143,10 @@ public class TableTest extends JPanel
 
     private void printOutput(){ 
         String[] messages = allErrors.get();
-        System.out.print(Arrays.toString(messages));
         StyledDocument doc = textPane.getStyledDocument();
         doc.setCharacterAttributes(ALLBITS, ABORT, keyWord, getFocusTraversalKeysEnabled());
         int totalCount = 0;
         int count = 0;
-        int printCount = 0;
         try {
             for (String message : messages) {
                 totalCount = messages.length;
@@ -161,13 +157,14 @@ public class TableTest extends JPanel
                     } else {
                         doc.insertString(doc.getLength(), message + "\n", null);
                     }
-                    printCount++;
                 }
             }
 
-            if (printCount >= 30) {
-                doc.remove(0, doc.getLength());
+            
+            while (doc.getLength() >= 150) {
+                doc.remove(0, 10);
             }
+
             doc.insertString(doc.getLength(), count + " motor has errors of " + totalCount + "\n", keyWord);
         } catch(BadLocationException e){
             e.printStackTrace();
@@ -191,4 +188,3 @@ public class TableTest extends JPanel
         frame.setVisible(true);
     }
 }
-
