@@ -20,20 +20,22 @@ public class MotorInfo {
     public double encoderMax;
 
     public MotorInfo(String input) {
-        inputList = input.split(" ");
-        subSystem = inputList[0];
-        motorName = inputList[1];
-        canID = inputList[2];
-        pdhPort = inputList[3];
+        if (input.split(" ").length>=10){
+            inputList = input.split(" ");
+            subSystem = inputList[0];
+            motorName = inputList[1];
+            canID = inputList[2];
+            pdhPort = inputList[3];
 
-        speed = Double.parseDouble(inputList[4]);
-        joystickScale = inputList[5] == "false";
-        coast = inputList[6] == "false"; //could accept int
-        motorInversed = inputList[7] == "false";
-        currLimit = Double.parseDouble(inputList[8]);
-        encoderMin = Double.parseDouble(inputList[9]);
-        encoderMax = Double.parseDouble(inputList[10]);
-        solenoidOn = inputList[11] == "false";
-        isIncluded = inputList[12] == "false";
+            speed = Double.parseDouble(inputList[4]);
+            joystickScale = inputList[5] == "false";
+            coast = inputList[6] == "false"; //could accept int
+            motorInversed = inputList[7] == "false";
+            currLimit = Double.parseDouble(inputList[8]);
+            encoderMin = Double.parseDouble(inputList[9]);
+            encoderMax = Double.parseDouble(inputList[10]);
+            solenoidOn = inputList[11] == "false";
+            isIncluded = inputList[12] == "false";
+        }
     }
 }
