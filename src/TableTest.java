@@ -26,6 +26,7 @@ public class TableTest extends JPanel
 
     private static JFrame frame;
     private JTextPane textPane;
+    private JOptionPane popUp;
     private SimpleAttributeSet keyWord = new SimpleAttributeSet();
 
     private NetworkTableInstance inst;
@@ -36,7 +37,8 @@ public class TableTest extends JPanel
     private BooleanPublisher running;
     private BooleanPublisher twitchTest;
 
-    private boolean runningTwitchTest;    
+    private boolean doneTwitchTest = false;
+
     private String[] messages = {"all is well!"};
     
     private String[] testingOut = {"sub solenoid 12 13 0.0 0 0 0 0.0 -2.0 0.0 0 0", 
@@ -45,6 +47,7 @@ public class TableTest extends JPanel
 
     private StringArraySubscriber registeredMotors;
     private StringArraySubscriber allErrors;
+    private BooleanSubscriber isRunningTwitch;
 
     public TableTest() {
         super();
@@ -54,8 +57,10 @@ public class TableTest extends JPanel
         tableArray = dataTable.getStringArrayTopic("tableValues").publish();
         running = dataTable.getBooleanTopic("Running?").publish();
         twitchTest = dataTable.getBooleanTopic("twitchTest?").publish();
+
         this.registeredMotors = dataTable.getStringArrayTopic("motors").subscribe(messages);
         this.allErrors = dataTable.getStringArrayTopic("errors").subscribe(messages);
+        isRunningTwitch = dataTable.getBooleanTopic("runningTwitch").subscribe(false);
 
         try { Thread.sleep(1000); } catch (Exception e) {}
 
@@ -63,7 +68,7 @@ public class TableTest extends JPanel
         System.out.println(Arrays.toString(motors));
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        table = new JTable(new RowInputOutput(motors)); //change to motors when testing with robot
+        table = new JTable(new RowInputOutput(testingOut)); //change to motors when testing with robot
         table.setPreferredScrollableViewportSize(new Dimension(1000, 500));
         table.setFillsViewportHeight(true);
         table.setMinimumSize(new Dimension(500, 500));
@@ -136,13 +141,16 @@ public class TableTest extends JPanel
             running.set(false);
         } else if (buttonName.equals(runTwitchTest)) {
             twitchTest.set(true);
-            runningTwitchTest = true;
             twitchTest.setDefault(false);
+
+            // get done twitch test from robot
+            popUp = new JOptionPane("running twitch test", JOptionPane.PLAIN_MESSAGE);
+            popUp.createDialog("running twitch test").setVisible(isRunningTwitch.get());
         }
     }
 
     private void printOutput(){ 
-        String[] messages = allErrors.get();
+        // String[] messages = allErrors.get();
         StyledDocument doc = textPane.getStyledDocument();
         doc.setCharacterAttributes(ALLBITS, ABORT, keyWord, getFocusTraversalKeysEnabled());
         int totalCount = 0;
