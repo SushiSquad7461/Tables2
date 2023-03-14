@@ -57,6 +57,7 @@ public class TableTest extends JPanel
         tableArray = dataTable.getStringArrayTopic("tableValues").publish();
         running = dataTable.getBooleanTopic("Running?").publish();
         twitchTest = dataTable.getBooleanTopic("twitchTest?").publish();
+        twitchTest.setDefault(false);
 
         this.registeredMotors = dataTable.getStringArrayTopic("motors").subscribe(messages);
         this.allErrors = dataTable.getStringArrayTopic("errors").subscribe(messages);
@@ -68,7 +69,7 @@ public class TableTest extends JPanel
         System.out.println(Arrays.toString(motors));
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        table = new JTable(new RowInputOutput(testingOut)); //change to motors when testing with robot
+        table = new JTable(new RowInputOutput(motors)); //change to motors when testing with robot
         table.setPreferredScrollableViewportSize(new Dimension(1000, 500));
         table.setFillsViewportHeight(true);
         table.setMinimumSize(new Dimension(500, 500));
@@ -123,6 +124,10 @@ public class TableTest extends JPanel
     public void actionPerformed(ActionEvent event) {
         Object buttonName = event.getSource();
         printOutput();
+        if  (!isRunningTwitch.get()){
+            twitchTest.set(false);
+        }
+
         if (buttonName.equals(pushAll)){
             String[] output = new String[table.getRowCount()];
             
@@ -141,7 +146,6 @@ public class TableTest extends JPanel
             running.set(false);
         } else if (buttonName.equals(runTwitchTest)) {
             twitchTest.set(true);
-            twitchTest.setDefault(false);
 
             // get done twitch test from robot
             popUp = new JOptionPane("running twitch test", JOptionPane.PLAIN_MESSAGE);
