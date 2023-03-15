@@ -3,6 +3,7 @@ import java.awt.*;
 
 import javax.swing.*;
 import javax.swing.plaf.ColorUIResource;
+import javax.swing.plaf.PopupMenuUI;
 import javax.swing.table.*;
 import javax.swing.text.*;
 
@@ -53,15 +54,16 @@ public class TableTest extends JPanel
         super();
         inst = NetworkTableInstance.getDefault();
         dataTable = inst.getTable("dataTable");
+        popUp = new JOptionPane("running twitch test", JOptionPane.PLAIN_MESSAGE);
+        popUp.setVisible(false);
 
         tableArray = dataTable.getStringArrayTopic("tableValues").publish();
         running = dataTable.getBooleanTopic("Running?").publish();
         twitchTest = dataTable.getBooleanTopic("twitchTest?").publish();
-        twitchTest.setDefault(false);
 
         this.registeredMotors = dataTable.getStringArrayTopic("motors").subscribe(messages);
         this.allErrors = dataTable.getStringArrayTopic("errors").subscribe(messages);
-        isRunningTwitch = dataTable.getBooleanTopic("runningTwitch").subscribe(false);
+        isRunningTwitch = dataTable.getBooleanTopic("twitchTest?").subscribe(false);
 
         try { Thread.sleep(1000); } catch (Exception e) {}
 
@@ -124,10 +126,6 @@ public class TableTest extends JPanel
     public void actionPerformed(ActionEvent event) {
         Object buttonName = event.getSource();
         printOutput();
-        if  (!isRunningTwitch.get()){
-            twitchTest.set(false);
-        }
-
         if (buttonName.equals(pushAll)){
             String[] output = new String[table.getRowCount()];
             
@@ -146,15 +144,18 @@ public class TableTest extends JPanel
             running.set(false);
         } else if (buttonName.equals(runTwitchTest)) {
             twitchTest.set(true);
-
             // get done twitch test from robot
-            popUp = new JOptionPane("running twitch test", JOptionPane.PLAIN_MESSAGE);
-            popUp.createDialog("running twitch test").setVisible(isRunningTwitch.get());
+            popUp.setVisible(true);  
         }
+
+        if  (!isRunningTwitch.get()){
+            twitchTest.set(false);
+            popUp.setVisible(false);
+        }  
     }
 
     private void printOutput(){ 
-        // String[] messages = allErrors.get();
+        String[] messages = allErrors.get();
         StyledDocument doc = textPane.getStyledDocument();
         doc.setCharacterAttributes(ALLBITS, ABORT, keyWord, getFocusTraversalKeysEnabled());
         int totalCount = 0;
@@ -171,7 +172,6 @@ public class TableTest extends JPanel
                     }
                 }
             }
-
             
             while (doc.getLength() >= 150) {
                 doc.remove(0, 10);
